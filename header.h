@@ -24,3 +24,4 @@ int			ft_env(char **args);
 char		**get_copy_env(void);
 int			ft_setenv(char **args);
 char		*get_env_var(const char *var);
+int			change_env_var(const char *var, const char *value);

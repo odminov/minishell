@@ -12,6 +12,7 @@
 
 #include "header.h"
 #include <unistd.h>
+#include <stdlib.h>
 
 char	*g_list_inline_func[] = {
 	"cd",
@@ -36,13 +37,16 @@ int			num_func(void)
 int			ft_cd(char **args)
 {
 	char	*dir;
+	char	*temp;
 
 	if (args[1] == NULL)
 	{
 		if ((dir = get_env_var("HOME")))
 		{
 			if (chdir(dir) != 0)
-				ft_printf("error: cd: %s\n", dir);
+				return (ft_printf("error: cd: %s\n", dir));
+			change_env_var("OLDPWD=", get_env_var("PWD"));
+			change_env_var("PWD=", dir);
 		}
 	}
 	else
@@ -50,11 +54,25 @@ int			ft_cd(char **args)
 		if ((ft_strcmp(args[1], "-") == 0) && (dir = get_env_var("OLDPWD")))
 		{
 			if (chdir(dir) != 0)
-				ft_printf("error - : cd: %s\n", dir);
+				return (ft_printf("error - : cd: %s\n", dir));
+			temp = ft_strdup(get_env_var("OLDPWD"));
+			change_env_var("OLDPWD=", get_env_var("PWD"));
+			change_env_var("PWD=", temp);
+			free(temp);
 			return (1);
 		}
-		if (chdir(args[1]) != 0)
-			ft_printf("error: cd: %s\n", args[1]);
+		if (chdir(args[1]) != 0)/*fix cd .. in env OLDPWD and PWD */
+			return (ft_printf("error: cd: %s\n", args[1]));
+		change_env_var("OLDPWD=", get_env_var("PWD"));
+		if (args[1][0] == '/')
+			change_env_var("PWD=", args[1]);
+		else
+		{
+			temp = ft_strjoin(get_env_var("PWD"), "/");
+			change_env_var("PWD=", (dir = ft_strjoin(temp, args[1])));
+			free(dir);
+			free(temp);
+		}
 	}
 	return (1);
 }

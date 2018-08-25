@@ -77,17 +77,6 @@ static int	add_new_var(char *var)
 	return (1);
 }
 
-int		change_env_var(const char *var, const char *value)
-{
-	int		i;
-
-	i = 0;
-	while (g_env_cp[i])
-	{
-		if (ft_strstr(g_env_cp[i], var))
-	}
-}
-
 char	*get_env_var(const char *var)
 {
 	int		i;
@@ -139,4 +128,25 @@ int			ft_unsetenv(char **args)
 	if (!args[1])
 		return (0);
 	return (1);
+}
+
+int		change_env_var(const char *var, const char *value)
+{
+	char	**temp;
+
+	temp = (char **)malloc(sizeof(char *) * 3);
+	temp[0] = ft_strdup("test");
+	temp[1] = ft_strjoin(var, value);
+	temp[2] = NULL;
+	if (ft_setenv(temp))
+	{
+		free(temp[0]);
+		free(temp[1]);
+		free(temp);
+		return (1);
+	}
+	free(temp[0]);
+	free(temp[1]);
+	free(temp);
+	return (0);
 }
