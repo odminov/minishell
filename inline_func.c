@@ -10,38 +10,51 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "./libft/libft.h"
 #include "header.h"
 #include <unistd.h>
-#define HOME_DIR "/"
 
-char	*g_list_func[] = {
+char	*g_list_inline_func[] = {
 	"cd",
 	"help",
-	"exit"
+	"exit",
+	"env",
+	"setenv"
 };
-int	(*g_inln_func[]) (char **) = {
+int	(*g_inline_func[]) (char **) = {
 	ft_cd,
 	ft_help,
-	ft_exit
+	ft_exit,
+	ft_env,
+	ft_setenv
 };
 
 int			num_func(void)
 {
-	return (sizeof(g_list_func) / sizeof(char *));
+	return (sizeof(g_list_inline_func) / sizeof(char *));
 }
 
 int			ft_cd(char **args)
 {
+	char	*dir;
+
 	if (args[1] == NULL)
 	{
-		ft_printf("err");
-		chdir(HOME_DIR);
+		if ((dir = get_env_var("HOME")))
+		{
+			if (chdir(dir) != 0)
+				ft_printf("error: cd: %s\n", dir);
+		}
 	}
 	else
 	{
+		if ((ft_strcmp(args[1], "-") == 0) && (dir = get_env_var("OLDPWD")))
+		{
+			if (chdir(dir) != 0)
+				ft_printf("error - : cd: %s\n", dir);
+			return (1);
+		}
 		if (chdir(args[1]) != 0)
-			ft_printf("err minishell");
+			ft_printf("error: cd: %s\n", args[1]);
 	}
 	return (1);
 }
@@ -57,7 +70,7 @@ int			ft_help(char **args)
 	ft_printf("List of inline commands:\n");
 	i = 0;
 	while (i < num_func())
-		ft_printf("\t%s\n", g_list_func[i++]);
+		ft_printf("\t%s\n", g_list_inline_func[i++]);
 	return (1);
 }
 

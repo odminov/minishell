@@ -14,7 +14,7 @@ CC = gcc
 
 FLAGS = -Wextra -Wall -Werror
 
-SRC = main.c inline_func.c
+SRC = main.c inline_func.c environ.c
 
 D_OBJ = obj/
 

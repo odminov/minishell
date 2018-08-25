@@ -11,15 +11,15 @@
 /* ************************************************************************** */
 
 #include "header.h"
-#include "./libft/libft.h"
 #include <sys/wait.h>
 #include <unistd.h>
 #include <stdlib.h>
 #include <stdio.h>
 #define STDIN 0
 
-extern char	*g_list_func[];
-extern int	(*g_inln_func[]) (char **);
+extern char	*g_list_inline_func[];
+extern int	(*g_inline_func[]) (char **);
+extern char	**g_env_cp;
 
 char	*read_line(void)
 {
@@ -41,17 +41,16 @@ char	**split_args(char *line)
 	return (args);
 }
 
-int		execute(char **args, char **envp)
+int		execute(char **args)
 {
 	pid_t	pid;
 	pid_t	wpid;
 	int		status;
 
 	pid = fork();
-	ft_printf("envp: %s\n", envp[14]);
 	if (pid == 0)
 	{
-		if (execve("/bin/ls", args, envp) == -1)
+		if (execve("/bin/ls", args, g_env_cp) == -1)
 			perror("lsh execve");
 		exit(EXIT_FAILURE);
 	}
@@ -70,7 +69,7 @@ int		execute(char **args, char **envp)
 	return (1);
 }
 
-int		check_command(char **args, char **envp)
+int		check_command(char **args)
 {
 	int		i;
 
@@ -79,14 +78,14 @@ int		check_command(char **args, char **envp)
 	i = 0;
 	while (i < num_func())
 	{
-		if (ft_strcmp(args[0], g_list_func[i]) == 0)
-			return ((*g_inln_func[i])(args));
+		if (ft_strcmp(args[0], g_list_inline_func[i]) == 0)
+			return ((*g_inline_func[i])(args));
 		i++;
 	}
-	return (execute(args, envp));
+	return (execute(args));
 }
 
-void	main_loop(char **envp)
+void	main_loop(void)
 {
 	char	*line;
 	char	**args;
@@ -98,17 +97,15 @@ void	main_loop(char **envp)
 		ft_printf("$> ");
 		line = read_line();
 		args = split_args(line);
-		status = check_command(args, envp);
+		status = check_command(args);
 		free(line);
 		free(args);
 	}
 }
 
-int		main(int ac, char **av, char **envp)
+int		main(void)
 {
-	if (ac < 2)
-		if (av[1])
-			;
-	main_loop(envp);
+	get_copy_env();
+	main_loop();
 	return (0);
 }
