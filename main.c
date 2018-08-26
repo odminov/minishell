@@ -34,10 +34,29 @@ char	*read_line(void)
 char	**split_args(char *line)
 {
 	char	**args;
+	char	*temp;
+	int		i;
 
-	args = ft_strsplit(line, ' ');
-	if (!args)
-		return (NULL);
+	temp = line;
+	if ((line = find_echo(line)))
+	{
+		args = (char **)malloc(sizeof(char *) * 3);
+		args[2] = NULL;
+		args[0] = ft_strdup("echo");
+		args[1] = (char *)malloc(ft_strlen(line) + 1);
+		i = 0;
+		line += 4;
+		while (line && *line == ' ')
+			line++;
+		while (line && *line)
+		{
+			if (*line != '"')
+				args[1][i++] = *line;
+			line++;
+		}
+		return (args);
+	}
+	args = ft_strsplit(temp, ' ');
 	return (args);
 }
 
@@ -85,12 +104,14 @@ int		check_command(char **args)
 	return (execute(args));
 }
 
-void	main_loop(void)
+int		main(void)
 {
 	char	*line;
 	char	**args;
 	int		status;
+	int		i;
 
+	get_copy_env();
 	status = 1;
 	while (status)
 	{
@@ -99,13 +120,13 @@ void	main_loop(void)
 		args = split_args(line);
 		status = check_command(args);
 		free(line);
+		i = 0;
+		while (args && args[i])
+		{
+			free(args[i]);
+			i++;
+		}
 		free(args);
 	}
-}
-
-int		main(void)
-{
-	get_copy_env();
-	main_loop();
 	return (0);
 }

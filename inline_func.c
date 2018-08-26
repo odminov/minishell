@@ -19,62 +19,25 @@ char	*g_list_inline_func[] = {
 	"help",
 	"exit",
 	"env",
-	"setenv"
+	"setenv",
+	"unsetenv",
+	"pwd",
+	"echo"
 };
 int	(*g_inline_func[]) (char **) = {
 	ft_cd,
 	ft_help,
 	ft_exit,
 	ft_env,
-	ft_setenv
+	ft_setenv,
+	ft_unsetenv,
+	ft_pwd,
+	ft_echo
 };
 
 int			num_func(void)
 {
 	return (sizeof(g_list_inline_func) / sizeof(char *));
-}
-
-int			ft_cd(char **args)
-{
-	char	*dir;
-	char	*temp;
-
-	if (args[1] == NULL)
-	{
-		if ((dir = get_env_var("HOME")))
-		{
-			if (chdir(dir) != 0)
-				return (ft_printf("error: cd: %s\n", dir));
-			change_env_var("OLDPWD=", get_env_var("PWD"));
-			change_env_var("PWD=", dir);
-		}
-	}
-	else
-	{
-		if ((ft_strcmp(args[1], "-") == 0) && (dir = get_env_var("OLDPWD")))
-		{
-			if (chdir(dir) != 0)
-				return (ft_printf("error - : cd: %s\n", dir));
-			temp = ft_strdup(get_env_var("OLDPWD"));
-			change_env_var("OLDPWD=", get_env_var("PWD"));
-			change_env_var("PWD=", temp);
-			free(temp);
-			return (1);
-		}
-		if (chdir(args[1]) != 0)/*fix cd .. in env OLDPWD and PWD */
-			return (ft_printf("error: cd: %s\n", args[1]));
-		change_env_var("OLDPWD=", get_env_var("PWD"));
-		if (args[1][0] == '/')
-			change_env_var("PWD=", args[1]);
-		else
-		{
-			temp = ft_strjoin(get_env_var("PWD"), "/");
-			change_env_var("PWD=", (dir = ft_strjoin(temp, args[1])));
-			free(dir);
-			free(temp);
-		}
-	}
-	return (1);
 }
 
 int			ft_help(char **args)
@@ -89,6 +52,35 @@ int			ft_help(char **args)
 	i = 0;
 	while (i < num_func())
 		ft_printf("\t%s\n", g_list_inline_func[i++]);
+	return (1);
+}
+
+char		*find_echo(char *line)
+{
+	int			i;
+	const char	name[] = "echo";
+
+	while (line && (*line == ' ' || *line == '\t'))
+		line++;
+	i = 0;
+	while (line[i] && name[i] && (line[i] == name[i]))
+		i++;
+	if (name[i] == '\0' && line[i] == ' ')
+		return (line);
+	return (NULL);
+}
+
+int			ft_echo(char **args)
+{
+	int	i;
+
+	i = 1;
+	while (args && args[i])
+	{
+		write(1, args[i], ft_strlen(args[i]));
+		i++;
+	}
+	write(1, "\n", 1);
 	return (1);
 }
 

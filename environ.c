@@ -13,12 +13,16 @@
 #include "header.h"
 #include <stdlib.h>
 #include <stdio.h>
+#include <unistd.h>
+#include <limits.h>
 
 char		**g_env_cp;
 
 char		**get_copy_env(void)
 {
 	int			i;
+	char		*dir;
+	char		*temp;
 	extern char	**environ;
 
 	i = 0;
@@ -34,19 +38,12 @@ char		**get_copy_env(void)
 			return (NULL);
 		i++;
 	}
+	dir = NULL;
+	temp = ft_strjoin(getcwd(dir, PATH_MAX), "/minishell");
+	change_env_var("SHELL=", temp);
+	free(dir);
+	free(temp);
 	return (g_env_cp);
-}
-
-int			ft_env(char **args)
-{
-	int		i;
-
-	if (args[1])
-		ft_printf("Use \"env\" command without arguments\n");
-	i = 0;
-	while (g_env_cp[i])
-		ft_printf("%s\n", g_env_cp[i++]);
-	return (1);
 }
 
 static int	add_new_var(char *var)
@@ -67,8 +64,7 @@ static int	add_new_var(char *var)
 	i = 0;
 	while (g_env_cp[i])
 	{
-		temp[i] = g_env_cp[
-			i];
+		temp[i] = g_env_cp[i];
 		i++;
 	}
 	temp[i] = var;
@@ -77,19 +73,15 @@ static int	add_new_var(char *var)
 	return (1);
 }
 
-char	*get_env_var(const char *var)
+char		*get_env_var(const char *var)
 {
 	int		i;
-	char	*res;
 
 	i = 0;
 	while (g_env_cp[i])
 	{
-		if (ft_strstr(g_env_cp[i], var))
-		{
-			res = ft_strchr(g_env_cp[i], '=');
-			return (!res ? NULL : res + 1);
-		}
+		if (find_var(g_env_cp[i], var))
+			return (&(g_env_cp[i][ft_strlen(var) + 1]));
 		i++;
 	}
 	return (NULL);
@@ -111,7 +103,7 @@ int			ft_setenv(char **args)
 	i = 0;
 	while (g_env_cp[i])
 	{
-		if (ft_strstr(g_env_cp[i], var))
+		if (find_var(g_env_cp[i], var))
 		{
 			free(g_env_cp[i]);
 			g_env_cp[i] = var;
@@ -123,17 +115,12 @@ int			ft_setenv(char **args)
 	return (add_new_var(var));
 }
 
-int			ft_unsetenv(char **args)
-{
-	if (!args[1])
-		return (0);
-	return (1);
-}
-
-int		change_env_var(const char *var, const char *value)
+int			change_env_var(const char *var, const char *value)
 {
 	char	**temp;
 
+	if (!value)
+		return (0);
 	temp = (char **)malloc(sizeof(char *) * 3);
 	temp[0] = ft_strdup("test");
 	temp[1] = ft_strjoin(var, value);

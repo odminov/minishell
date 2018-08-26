@@ -12,16 +12,20 @@
 
 #include "./libft/libft.h"
 
-int			ft_cd(char **args);/*
+int			ft_cd(char **args);
 int			ft_echo(char **args);
 int			ft_setenv(char **args);
 int			ft_unsetenv(char **args);
-int			ft_env(char **args);*/
+int			ft_env(char **args);
+int			ft_pwd(char **args);
 int			ft_help(char **args);
 int			ft_exit(char **args);
+int			ft_pwd(char **args);
 int			num_func(void);
 int			ft_env(char **args);
 char		**get_copy_env(void);
 int			ft_setenv(char **args);
 char		*get_env_var(const char *var);
 int			change_env_var(const char *var, const char *value);
+char		*find_var(char *str, const char *name);
+char		*find_echo(char *line);
