@@ -10,7 +10,9 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "./libft/libft.h"
+#ifndef HEADER_H
+# define HEADER_H
+# include "./lib_ahrytsen/libft.h"
 
 int			ft_cd(char **args);
 int			ft_echo(char **args);
@@ -29,3 +31,6 @@ char		*get_env_var(const char *var);
 int			change_env_var(const char *var, const char *value);
 char		*find_var(char *str, const char *name);
 char		*find_echo(char *line);
+char		*find_command(char **args);
+
+#endif

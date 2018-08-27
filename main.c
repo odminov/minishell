@@ -56,35 +56,38 @@ char	**split_args(char *line)
 		}
 		return (args);
 	}
+	system("leaks -quiet minishell");
 	args = ft_strsplit(temp, ' ');
+	system("leaks -quiet minishell");	
 	return (args);
 }
 
 int		execute(char **args)
 {
 	pid_t	pid;
-	pid_t	wpid;
 	int		status;
+	char	*path;
 
+	if (!(path = find_command(args)))
+		return (ft_printf("minishell: command not found: %s\n", args[0]));
 	pid = fork();
 	if (pid == 0)
 	{
-		if (execve("/bin/ls", args, g_env_cp) == -1)
-			perror("lsh execve");
+		if (execve(path, args, g_env_cp) == -1)
+			ft_printf("minishell execve");
+		free(path);
 		exit(EXIT_FAILURE);
 	}
 	else if (pid < 0)
-	{
-		perror("lsh");
-	}
+		ft_printf("lsh");
 	else
-	{
-		do
+		while (1)
 		{
-			wpid = waitpid(pid, &status, WUNTRACED);
+			waitpid(pid, &status, WUNTRACED);
+			if (WIFEXITED(status) || WIFSIGNALED(status))
+				break ;
 		}
-		while (!WIFEXITED(status) && !WIFSIGNALED(status));
-	}
+	free(path);
 	return (1);
 }
 
@@ -127,6 +130,7 @@ int		main(void)
 			i++;
 		}
 		free(args);
+		// system("leaks -quiet minishell");
 	}
 	return (0);
 }

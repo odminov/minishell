@@ -21,7 +21,7 @@ char		**g_env_cp;
 char		**get_copy_env(void)
 {
 	int			i;
-	char		*dir;
+	char		dir[PATH_MAX];
 	char		*temp;
 	extern char	**environ;
 
@@ -38,10 +38,8 @@ char		**get_copy_env(void)
 			return (NULL);
 		i++;
 	}
-	dir = NULL;
 	temp = ft_strjoin(getcwd(dir, PATH_MAX), "/minishell");
 	change_env_var("SHELL=", temp);
-	free(dir);
 	free(temp);
 	return (g_env_cp);
 }
@@ -122,7 +120,7 @@ int			change_env_var(const char *var, const char *value)
 	if (!value)
 		return (0);
 	temp = (char **)malloc(sizeof(char *) * 3);
-	temp[0] = ft_strdup("test");
+	temp[0] = ft_strdup("\0");
 	temp[1] = ft_strjoin(var, value);
 	temp[2] = NULL;
 	if (ft_setenv(temp))
@@ -135,5 +133,5 @@ int			change_env_var(const char *var, const char *value)
 	free(temp[0]);
 	free(temp[1]);
 	free(temp);
-	return (0);
+	return (1);
 }
