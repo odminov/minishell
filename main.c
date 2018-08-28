@@ -15,7 +15,7 @@
 #include <unistd.h>
 #include <stdlib.h>
 #include <stdio.h>
-#define STDIN 0
+#include <signal.h>
 
 extern char	*g_list_inline_func[];
 extern int	(*g_inline_func[]) (char **);
@@ -31,37 +31,6 @@ char	*read_line(void)
 	return (line);
 }
 
-char	**split_args(char *line)
-{
-	char	**args;
-	char	*temp;
-	int		i;
-
-	temp = line;
-	if ((line = find_echo(line)))
-	{
-		args = (char **)malloc(sizeof(char *) * 3);
-		args[2] = NULL;
-		args[0] = ft_strdup("echo");
-		args[1] = (char *)malloc(ft_strlen(line) + 1);
-		i = 0;
-		line += 4;
-		while (line && *line == ' ')
-			line++;
-		while (line && *line)
-		{
-			if (*line != '"')
-				args[1][i++] = *line;
-			line++;
-		}
-		return (args);
-	}
-	system("leaks -quiet minishell");
-	args = ft_strsplit(temp, ' ');
-	system("leaks -quiet minishell");	
-	return (args);
-}
-
 int		execute(char **args)
 {
 	pid_t	pid;
@@ -69,17 +38,18 @@ int		execute(char **args)
 	char	*path;
 
 	if (!(path = find_command(args)))
-		return (ft_printf("minishell: command not found: %s\n", args[0]));
+		return (print_error("minishell: command not found: ", args[0]));
 	pid = fork();
+	signal(SIGINT, main_loop);
 	if (pid == 0)
 	{
 		if (execve(path, args, g_env_cp) == -1)
-			ft_printf("minishell execve");
+			print_error("minishell execve", NULL);
 		free(path);
 		exit(EXIT_FAILURE);
 	}
 	else if (pid < 0)
-		ft_printf("lsh");
+		print_error("minishell pid error", NULL);
 	else
 		while (1)
 		{
@@ -89,6 +59,33 @@ int		execute(char **args)
 		}
 	free(path);
 	return (1);
+}
+
+void	check_args(char **args)
+{
+	char	*temp;
+	int		i;
+
+	if (!args)
+		return ;
+	if (ft_strcmp(args[0], "~") == 0)
+	{
+		temp = ft_strdup(get_env_var("HOME"));
+		free(args[0]);
+		args[0] = temp;
+	}
+	i = 1;
+	while (args[i])
+	{
+		if (args[i][0] == '~')
+		{
+			temp = args[i];
+			args[i] = ft_strjoin(get_env_var("HOME"), &(args[i][1]));
+			free(temp);
+		}
+		i++;
+	}
+	check_dollar(args);
 }
 
 int		check_command(char **args)
@@ -107,20 +104,23 @@ int		check_command(char **args)
 	return (execute(args));
 }
 
-int		main(void)
+void	main_loop(int signal)
 {
 	char	*line;
 	char	**args;
 	int		status;
 	int		i;
 
-	get_copy_env();
 	status = 1;
+	if (signal)
+		signal = 1;
 	while (status)
 	{
-		ft_printf("$> ");
-		line = read_line();
-		args = split_args(line);
+		ft_putstr("$> ");
+		if (!(line = read_line()))
+			continue ;
+		args = ft_strsplit(line, ' ');
+		check_args(args);
 		status = check_command(args);
 		free(line);
 		i = 0;
@@ -130,7 +130,12 @@ int		main(void)
 			i++;
 		}
 		free(args);
-		// system("leaks -quiet minishell");
 	}
+}
+
+int		main(void)
+{
+	get_copy_env();
+	main_loop(1);
 	return (0);
 }

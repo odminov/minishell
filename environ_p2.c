@@ -20,10 +20,13 @@ int			ft_env(char **args)
 	int		i;
 
 	if (args[1])
-		return (ft_printf("env: Invalid argument\n"));
+		return (print_error("env: Invalid argument\n", NULL));
 	i = 0;
 	while (g_env_cp[i])
-		ft_printf("%s\n", g_env_cp[i++]);
+	{
+		ft_putstr(g_env_cp[i++]);
+		ft_putchar('\n');
+	}
 	return (1);
 }
 

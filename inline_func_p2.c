@@ -22,7 +22,7 @@ static int	cd_home(void)
 	if (!(dir = get_env_var("HOME")))
 		return (1);
 	if (chdir(dir) != 0)
-		return (ft_printf("error: cd: %s\n", dir));
+		return (print_error("error: cd: ", dir));
 	change_env_var("OLDPWD=", get_env_var("PWD"));
 	dir = ft_strnew(PATH_MAX);
 	change_env_var("PWD=", getcwd(dir, PATH_MAX));
@@ -41,7 +41,7 @@ int			ft_cd(char **args)
 		if (!(dir = get_env_var("OLDPWD")))
 			return (1);
 		if (chdir(dir) != 0)
-			return (ft_printf("error: cd: %s\n", dir));
+			return (print_error("error: cd: ", dir));
 		change_env_var("OLDPWD=", get_env_var("PWD"));
 		dir = ft_strnew(PATH_MAX);
 		change_env_var("PWD=", getcwd(dir, PATH_MAX));
@@ -49,20 +49,10 @@ int			ft_cd(char **args)
 		return (1);
 	}
 	if (chdir(args[1]) != 0)
-		return (ft_printf("error: cd: %s\n", args[1]));
+		return (print_error("error: cd: ", args[1]));
 	change_env_var("OLDPWD=", get_env_var("PWD"));
 	dir = ft_strnew(PATH_MAX);
 	change_env_var("PWD=", getcwd(dir, PATH_MAX));
 	free(dir);
-	return (1);
-}
-
-int			ft_pwd(char **args)
-{
-	char	dir[PATH_MAX];
-
-	if (args && args[1])
-		;
-	ft_printf("%s\n", getcwd(dir, PATH_MAX));
 	return (1);
 }

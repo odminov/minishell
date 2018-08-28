@@ -28,19 +28,19 @@ $(D_OBJ)%.o:%.c
 	$(CC) $(FLAGS) -c $< -o $@
 
 $(NAME): $(D_OBJ) $(OBJ)
-	@make -C ./lib_ahrytsen
-	$(CC) $(FLAGS) -o $(NAME) $(OBJ) ./lib_ahrytsen/libft.a #./lib_ahrytsen/libftprintf.a
+	@make -C ./libft
+	$(CC) $(FLAGS) -o $(NAME) $(OBJ) ./libft/libft.a
 	@printf "\x1b[32m%s compiled\n\x1b[0m\n" $(NAME)
 
 $(D_OBJ):
 	mkdir $@
 
 clean:
-	@make -C ./lib_ahrytsen $@
+	@make -C ./libft $@
 	rm -rf $(D_OBJ)
 
 fclean: clean
-	@make -C ./lib_ahrytsen $@
+	@make -C ./libft $@
 	rm -rf $(NAME)
 	rm -rf *~
 	rm -rf \#*\#

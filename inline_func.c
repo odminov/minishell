@@ -21,7 +21,6 @@ char	*g_list_inline_func[] = {
 	"env",
 	"setenv",
 	"unsetenv",
-	"pwd",
 	"echo"
 };
 int	(*g_inline_func[]) (char **) = {
@@ -31,7 +30,6 @@ int	(*g_inline_func[]) (char **) = {
 	ft_env,
 	ft_setenv,
 	ft_unsetenv,
-	ft_pwd,
 	ft_echo
 };
 
@@ -45,29 +43,18 @@ int			ft_help(char **args)
 	int		i;
 
 	if (args[1])
-		ft_printf("Надо просить помощи без аргументов\n");
-	ft_printf("ahonchar's minishell\n");
-	ft_printf("Please type command name and its arguments\n");
-	ft_printf("List of inline commands:\n");
+		ft_putstr("Надо просить помощи без аргументов\n");
+	ft_putstr("ahonchar's minishell\n");
+	ft_putstr("Please type command name and its arguments\n");
+	ft_putstr("List of inline commands:\n");
 	i = 0;
 	while (i < num_func())
-		ft_printf("\t%s\n", g_list_inline_func[i++]);
+	{
+		ft_putchar('\t');
+		ft_putstr(g_list_inline_func[i++]);
+		ft_putchar('\n');
+	}
 	return (1);
-}
-
-char		*find_echo(char *line)
-{
-	int			i;
-	const char	name[] = "echo";
-
-	while (line && (*line == ' ' || *line == '\t'))
-		line++;
-	i = 0;
-	while (line[i] && name[i] && (line[i] == name[i]))
-		i++;
-	if (name[i] == '\0' && line[i] == ' ')
-		return (line);
-	return (NULL);
 }
 
 int			ft_echo(char **args)
@@ -77,6 +64,8 @@ int			ft_echo(char **args)
 	i = 1;
 	while (args && args[i])
 	{
+		if (i > 1)
+			write(1, " ", 1);
 		write(1, args[i], ft_strlen(args[i]));
 		i++;
 	}

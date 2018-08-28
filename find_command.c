@@ -52,3 +52,34 @@ char		*find_command(char **args)
 	free(dirs);
 	return (path);
 }
+
+void		check_dollar(char **args)
+{
+	int		i;
+	char	*var;
+	char	*temp;
+
+	i = 0;
+	while (args && args[i])
+	{
+		if ((var = ft_strchr(args[i], '$')))
+		{
+			*var = '\0';
+			var++;
+			temp = args[i];
+			args[i] = ft_strjoin(args[i], get_env_var(var));
+			free(temp);
+		}
+		i++;
+	}
+}
+
+int			print_error(const char *error1, const char *error2)
+{
+	if (error1)
+		ft_putstr_fd(error1, STDERR);
+	if (error2)
+		ft_putstr_fd(error2, STDERR);
+	ft_putchar('\n');
+	return (1);
+}
