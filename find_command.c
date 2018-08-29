@@ -83,3 +83,9 @@ int			print_error(const char *error1, const char *error2)
 	ft_putchar('\n');
 	return (1);
 }
+
+void	signal_hendl_waitpid(int signal)
+{
+	if (signal == SIGINT)
+		ft_putchar('\n');
+}

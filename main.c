@@ -33,7 +33,7 @@ char	*read_line(void)
 
 void	signal_hendl(int signal)
 {
-	if (signal == 2)
+	if (signal == SIGINT)
 	{
 		ft_putchar('\n');
 		ft_putstr("$> ");
@@ -61,7 +61,7 @@ int		execute(char **args)
 		print_error("minishell pid error", NULL);
 	else
 		{
-			signal(SIGINT, SIG_IGN);
+			signal(SIGINT, signal_hendl_waitpid);
 			waitpid(pid, &status, 0);
 			signal(SIGINT, signal_hendl);
 		}
@@ -100,7 +100,7 @@ int		check_command(char **args)
 {
 	int		i;
 
-	if (!args[0])
+	if (!args || !args[0])
 		return (1);
 	i = 0;
 	while (i < num_func())
@@ -128,16 +128,13 @@ int		main(void)
 		line = read_line();
 		if (!line || !*line)
 			continue ;
-		args = ft_strsplit(line, ' ');
+		args = strsplit_ws(line);
 		check_args(args);
 		status = check_command(args);
 		free(line);
 		i = 0;
 		while (args && args[i])
-		{
-			free(args[i]);
-			i++;
-		}
+			free(args[i++]);
 		free(args);
 	}
 	return (0);
