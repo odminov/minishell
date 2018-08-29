@@ -31,6 +31,15 @@ char	*read_line(void)
 	return (line);
 }
 
+void	signal_hendl(int signal)
+{
+	if (signal == 2)
+	{
+		ft_putchar('\n');
+		ft_putstr("$> ");
+	}
+}
+
 int		execute(char **args)
 {
 	pid_t	pid;
@@ -40,9 +49,9 @@ int		execute(char **args)
 	if (!(path = find_command(args)))
 		return (print_error("minishell: command not found: ", args[0]));
 	pid = fork();
-	signal(SIGINT, main_loop);
 	if (pid == 0)
 	{
+		signal(SIGINT, SIG_DFL);
 		if (execve(path, args, g_env_cp) == -1)
 			print_error("minishell execve", NULL);
 		free(path);
@@ -51,11 +60,10 @@ int		execute(char **args)
 	else if (pid < 0)
 		print_error("minishell pid error", NULL);
 	else
-		while (1)
 		{
-			waitpid(pid, &status, WUNTRACED);
-			if (WIFEXITED(status) || WIFSIGNALED(status))
-				break ;
+			signal(SIGINT, SIG_IGN);
+			waitpid(pid, &status, 0);
+			signal(SIGINT, signal_hendl);
 		}
 	free(path);
 	return (1);
@@ -104,7 +112,7 @@ int		check_command(char **args)
 	return (execute(args));
 }
 
-void	main_loop(int signal)
+int		main(void)
 {
 	char	*line;
 	char	**args;
@@ -112,12 +120,13 @@ void	main_loop(int signal)
 	int		i;
 
 	status = 1;
-	if (signal)
-		signal = 1;
+	get_copy_env();
+	signal(SIGINT, signal_hendl);
 	while (status)
 	{
 		ft_putstr("$> ");
-		if (!(line = read_line()))
+		line = read_line();
+		if (!line || !*line)
 			continue ;
 		args = ft_strsplit(line, ' ');
 		check_args(args);
@@ -131,11 +140,5 @@ void	main_loop(int signal)
 		}
 		free(args);
 	}
-}
-
-int		main(void)
-{
-	get_copy_env();
-	main_loop(1);
 	return (0);
 }

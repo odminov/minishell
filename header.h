@@ -16,7 +16,6 @@
 # define STDIN 0
 # define STDERR 2
 
-void		main_loop(int signal);
 int			ft_cd(char **args);
 int			ft_echo(char **args);
 int			ft_setenv(char **args);
