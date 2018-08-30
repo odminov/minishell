@@ -35,6 +35,8 @@ char		*find_command(char **args)
 	char	**dirs;
 	char	*path;
 
+	if (args[0] && (access(args[0], X_OK) == 0))
+		return (ft_strdup(args[0]));
 	if (!(dirs = ft_strsplit(get_env_var("PATH"), ':')))
 		return (NULL);
 	i = 0;

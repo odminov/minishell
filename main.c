@@ -53,12 +53,12 @@ int		execute(char **args)
 	{
 		signal(SIGINT, SIG_DFL);
 		if (execve(path, args, g_env_cp) == -1)
-			print_error("minishell execve", NULL);
+			print_error("minishell: execve error", NULL);
 		free(path);
 		exit(EXIT_FAILURE);
 	}
 	else if (pid < 0)
-		print_error("minishell pid error", NULL);
+		print_error("minishell: fork: child couldn't be created", NULL);
 	else
 		{
 			signal(SIGINT, signal_hendl_waitpid);
@@ -124,10 +124,16 @@ int		main(void)
 	signal(SIGINT, signal_hendl);
 	while (status)
 	{
-		ft_putstr("$> ");
+		if (read(STDIN, NULL, 0) < 0)
+			return (print_error("minishell: Cannot read from STDIN", NULL));
+		ft_putstr("$> ");		
 		line = read_line();
 		if (!line || !*line)
+		{
+			if (line)
+				free(line);
 			continue ;
+		}
 		args = strsplit_ws(line);
 		check_args(args);
 		status = check_command(args);
