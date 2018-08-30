@@ -76,17 +76,16 @@ void		check_dollar(char **args)
 	}
 }
 
-int			print_error(const char *error1, const char *error2)
+void		signal_hendl(int signal)
 {
-	if (error1)
-		ft_putstr_fd(error1, STDERR);
-	if (error2)
-		ft_putstr_fd(error2, STDERR);
-	ft_putchar('\n');
-	return (1);
+	if (signal == SIGINT)
+	{
+		ft_putchar('\n');
+		ft_putstr("$> ");
+	}
 }
 
-void	signal_hendl_waitpid(int signal)
+void		signal_hendl_waitpid(int signal)
 {
 	if (signal == SIGINT)
 		ft_putchar('\n');

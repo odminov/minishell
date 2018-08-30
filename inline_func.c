@@ -73,6 +73,16 @@ int			ft_echo(char **args)
 	return (1);
 }
 
+int			print_error(const char *error1, const char *error2)
+{
+	if (error1)
+		ft_putstr_fd(error1, STDERR);
+	if (error2)
+		ft_putstr_fd(error2, STDERR);
+	ft_putchar('\n');
+	return (1);
+}
+
 int			ft_exit(char **args)
 {
 	if (args[1])

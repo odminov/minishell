@@ -35,6 +35,7 @@ char		*find_command(char **args);
 void		check_dollar(char **args);
 int			print_error(const char *error1, const char *error2);
 void		signal_hendl_waitpid(int signal);
+void		signal_hendl(int signal);
 char		**strsplit_ws(const char *str);
 
 #endif

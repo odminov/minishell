@@ -21,25 +21,6 @@ extern char	*g_list_inline_func[];
 extern int	(*g_inline_func[]) (char **);
 extern char	**g_env_cp;
 
-char	*read_line(void)
-{
-	char	*line;
-
-	line = NULL;
-	if (get_next_line(STDIN, &line) < 0)
-		return (NULL);
-	return (line);
-}
-
-void	signal_hendl(int signal)
-{
-	if (signal == SIGINT)
-	{
-		ft_putchar('\n');
-		ft_putstr("$> ");
-	}
-}
-
 int		execute(char **args)
 {
 	pid_t	pid;
@@ -60,11 +41,11 @@ int		execute(char **args)
 	else if (pid < 0)
 		print_error("minishell: fork: child couldn't be created", NULL);
 	else
-		{
-			signal(SIGINT, signal_hendl_waitpid);
-			waitpid(pid, &status, 0);
-			signal(SIGINT, signal_hendl);
-		}
+	{
+		signal(SIGINT, signal_hendl_waitpid);
+		waitpid(pid, &status, 0);
+		signal(SIGINT, signal_hendl);
+	}
 	free(path);
 	return (1);
 }
@@ -112,7 +93,7 @@ int		check_command(char **args)
 	return (execute(args));
 }
 
-int		main(void)
+int		main_loop(void)
 {
 	char	*line;
 	char	**args;
@@ -120,15 +101,10 @@ int		main(void)
 	int		i;
 
 	status = 1;
-	get_copy_env();
-	signal(SIGINT, signal_hendl);
 	while (status)
 	{
-		if (read(STDIN, NULL, 0) < 0)
-			return (print_error("minishell: Cannot read from STDIN", NULL));
-		ft_putstr("$> ");		
-		line = read_line();
-		if (!line || !*line)
+		ft_putstr("$> ");
+		if (get_next_line(STDIN, &line) < 0 || !line || !*line)
 		{
 			if (line)
 				free(line);
@@ -144,4 +120,13 @@ int		main(void)
 		free(args);
 	}
 	return (0);
+}
+
+int		main(void)
+{
+	if (read(STDIN, NULL, 0) < 0)
+		return (print_error("minishell: Cannot read from STDIN", NULL));
+	signal(SIGINT, signal_hendl);
+	get_copy_env();
+	return (main_loop());
 }
