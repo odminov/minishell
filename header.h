@@ -25,7 +25,6 @@ int			ft_help(char **args);
 int			ft_exit(char **args);
 int			ft_pwd(char **args);
 int			num_func(void);
-int			ft_env(char **args);
 char		**get_copy_env(void);
 int			ft_setenv(char **args);
 char		*get_env_var(const char *var);
@@ -37,5 +36,7 @@ int			print_error(const char *error1, const char *error2);
 void		signal_hendl_waitpid(int signal);
 void		signal_hendl(int signal);
 char		**strsplit_ws(const char *str);
+int			print_env(void);
+int			check_command(char **args);
 
 #endif

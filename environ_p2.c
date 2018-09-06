@@ -15,12 +15,10 @@
 
 extern char	**g_env_cp;
 
-int			ft_env(char **args)
+int			print_env(void)
 {
 	int		i;
 
-	if (args[1])
-		return (print_error("env: Invalid argument\n", NULL));
 	i = 0;
 	while (g_env_cp[i])
 	{
