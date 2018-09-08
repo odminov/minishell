@@ -16,6 +16,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <signal.h>
+#include <limits.h>
 
 extern char	*g_list_inline_func[];
 extern int	(*g_inline_func[]) (char **);
@@ -124,9 +125,17 @@ int		main_loop(void)
 
 int		main(void)
 {
+	char		dir[PATH_MAX];
+	char		*temp;
+
 	if (read(STDIN, NULL, 0) < 0)
 		return (print_error("minishell: Cannot read from STDIN", NULL));
 	signal(SIGINT, signal_hendl);
 	get_copy_env();
+	if ((temp = ft_strjoin(getcwd(dir, PATH_MAX), "/minishell")))
+	{
+		change_env_var("SHELL=", temp);
+		free(temp);
+	}
 	return (main_loop());
 }

@@ -21,7 +21,6 @@ char		**g_env_cp;
 char		**get_copy_env(void)
 {
 	int			i;
-	char		dir[PATH_MAX];
 	char		*temp;
 	extern char	**environ;
 
@@ -38,8 +37,9 @@ char		**get_copy_env(void)
 			return (NULL);
 		i++;
 	}
-	temp = ft_strjoin(getcwd(dir, PATH_MAX), "/minishell");
-	change_env_var("SHELL=", temp);
+	i = (get_env_var("SHLVL")) ? ft_atoi(get_env_var("SHLVL")) + 1 : 1;
+	temp = ft_itoa(i);
+	change_env_var("SHLVL=", temp);
 	free(temp);
 	return (g_env_cp);
 }
