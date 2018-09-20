@@ -6,7 +6,7 @@
 /*   By: ahonchar <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/09/06 14:56:25 by ahonchar          #+#    #+#             */
-/*   Updated: 2018/09/06 14:56:26 by ahonchar         ###   ########.fr       */
+/*   Updated: 2018/09/16 17:44:43 by ahonchar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,7 +73,7 @@ int			ft_env(char **args)
 	}
 	temp = args;
 	args = &args[i];
-	check_command(args);
+	run_command(args);
 	return_old_env(temp_env);
 	args = temp;
 	return (1);

@@ -6,13 +6,14 @@
 /*   By: ahonchar <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/08/27 11:41:30 by ahonchar          #+#    #+#             */
-/*   Updated: 2018/08/27 11:41:31 by ahonchar         ###   ########.fr       */
+/*   Updated: 2018/09/16 17:44:27 by ahonchar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "header.h"
 #include <unistd.h>
 #include <stdlib.h>
+#define GET_VAR get_env_var
 
 static char	*check_dir(const char *dir, const char *binary)
 {
@@ -55,38 +56,41 @@ char		*find_command(char **args)
 	return (path);
 }
 
+static void	join_env(char **args, int i, char *temp2)
+{
+	char	*var;
+
+	var = args[i];
+	temp2--;
+	*temp2 = '$';
+	args[i] = ft_strjoin(args[i], temp2);
+	free(var);
+}
+
 void		check_dollar(char **args)
 {
 	int		i;
 	char	*var;
 	char	*temp;
+	char	*temp2;
 
 	i = 0;
+	temp2 = NULL;
 	while (args && args[i])
 	{
 		if ((var = ft_strchr(args[i], '$')))
 		{
-			*var = '\0';
-			var++;
+			*var++ = '\0';
+			if ((temp2 = ft_strchr(var, '$')))
+				*temp2++ = '\0';
 			temp = args[i];
-			args[i] = ft_strjoin(args[i], get_env_var(var));
+			args[i] = ft_strjoin(args[i], (GET_VAR(var)) ? GET_VAR(var) : "");
+			if (temp2)
+				join_env(args, i, temp2);
 			free(temp);
+			if (ft_strchr(args[i], '$'))
+				continue ;
 		}
 		i++;
 	}
-}
-
-void		signal_hendl(int signal)
-{
-	if (signal == SIGINT)
-	{
-		ft_putchar('\n');
-		ft_putstr("$> ");
-	}
-}
-
-void		signal_hendl_waitpid(int signal)
-{
-	if (signal == SIGINT)
-		ft_putchar('\n');
 }

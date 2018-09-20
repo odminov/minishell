@@ -22,14 +22,18 @@ OBJ = $(addprefix $(D_OBJ), $(SRC:.c=.o))
 
 NAME = minishell
 
-all: $(NAME)
+LIB = ./libft/libft.a
 
-$(D_OBJ)%.o:%.c
-	$(CC) $(FLAGS) -c $< -o $@
+all: libcomile $(NAME)
 
-$(NAME): $(D_OBJ) $(OBJ)
+libcomile:
 	@make -C ./libft
-	$(CC) $(FLAGS) -o $(NAME) $(OBJ) ./libft/libft.a
+
+$(D_OBJ)%.o:%.c header.h
+	$(CC) $(FLAGS) -c $< -o $@
+	
+$(NAME): $(D_OBJ) $(OBJ) $(LIB)
+	$(CC) $(FLAGS) -o $(NAME) $(OBJ) $(LIB)
 	@printf "\x1b[32m%s compiled\n\x1b[0m\n" $(NAME)
 
 $(D_OBJ):

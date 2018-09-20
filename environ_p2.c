@@ -6,7 +6,7 @@
 /*   By: ahonchar <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/08/26 22:44:03 by ahonchar          #+#    #+#             */
-/*   Updated: 2018/08/26 22:44:05 by ahonchar         ###   ########.fr       */
+/*   Updated: 2018/09/16 17:44:13 by ahonchar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,7 +76,8 @@ static int	update_env(void)
 		}
 		temp[j] = g_env_cp[i];
 		j++;
-		i++;
+		if (g_env_cp[i])
+			i++;
 	}
 	free(g_env_cp);
 	g_env_cp = temp;

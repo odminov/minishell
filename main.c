@@ -6,7 +6,7 @@
 /*   By: ahonchar <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/08/22 15:48:32 by ahonchar          #+#    #+#             */
-/*   Updated: 2018/08/22 15:48:34 by ahonchar         ###   ########.fr       */
+/*   Updated: 2018/09/16 17:45:36 by ahonchar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,9 +67,9 @@ void	check_args(char **args)
 	i = 1;
 	while (args[i])
 	{
-		if (args[i][0] == '~')
+		temp = args[i];
+		if (args[i][0] == '~' && args[i][1] != '~')
 		{
-			temp = args[i];
 			args[i] = ft_strjoin(get_env_var("HOME"), &(args[i][1]));
 			free(temp);
 		}
@@ -78,7 +78,7 @@ void	check_args(char **args)
 	check_dollar(args);
 }
 
-int		check_command(char **args)
+int		run_command(char **args)
 {
 	int		i;
 
@@ -113,7 +113,7 @@ int		main_loop(void)
 		}
 		args = strsplit_ws(line);
 		check_args(args);
-		status = check_command(args);
+		status = run_command(args);
 		free(line);
 		i = 0;
 		while (args && args[i])

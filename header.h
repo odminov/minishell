@@ -6,7 +6,7 @@
 /*   By: ahonchar <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/08/23 11:49:59 by ahonchar          #+#    #+#             */
-/*   Updated: 2018/08/23 11:50:01 by ahonchar         ###   ########.fr       */
+/*   Updated: 2018/09/16 17:44:55 by ahonchar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,6 +37,6 @@ void		signal_hendl_waitpid(int signal);
 void		signal_hendl(int signal);
 char		**strsplit_ws(const char *str);
 int			print_env(void);
-int			check_command(char **args);
+int			run_command(char **args);
 
 #endif
