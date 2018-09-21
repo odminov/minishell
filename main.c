@@ -29,7 +29,7 @@ int		execute(char **args)
 	char	*path;
 
 	if (!(path = find_command(args)))
-		return (print_error("minishell: command not found: ", args[0]));
+		return (check_perm(args));
 	pid = fork();
 	if (pid == 0)
 	{

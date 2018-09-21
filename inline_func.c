@@ -43,7 +43,7 @@ int			ft_help(char **args)
 	int		i;
 
 	if (args[1])
-		ft_putstr("Надо просить помощи без аргументов\n");
+		ft_putstr("Help: \n");
 	ft_putstr("ahonchar's minishell\n");
 	ft_putstr("Please type command name and its arguments\n");
 	ft_putstr("List of inline commands:\n");

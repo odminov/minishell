@@ -30,6 +30,20 @@ static char	*check_dir(const char *dir, const char *binary)
 	return (NULL);
 }
 
+int			check_perm(char **args)
+{
+	if (args[0] && (!access(args[0], F_OK)))
+	{
+		if (access(args[0], X_OK) != 0)
+			return (print_error("minishell: permission denied: ", args[0]));
+		if (access(args[0], R_OK) != 0)
+			return (print_error("minishell: permission denied: ", args[0]));
+	}
+	else
+		return (print_error("minishell: command not found: ", args[0]));
+	return (1);
+}
+
 char		*find_command(char **args)
 {
 	int		i;

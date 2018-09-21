@@ -38,5 +38,6 @@ void		signal_hendl(int signal);
 char		**strsplit_ws(const char *str);
 int			print_env(void);
 int			run_command(char **args);
+int			check_perm(char **args);
 
 #endif

@@ -12,8 +12,7 @@
 
 #include "./libft/libft.h"
 #include <stdlib.h>
-//
-#include <stdio.h>
+
 static int	parse_quotes(char **str, int *words)
 {
 	if (**str && **str == '"')
@@ -107,17 +106,13 @@ static char	**copy_to_arr(char *str, char **arr)
 		{
 			while (*str && !ft_iswhite_sp(*str) && *str != '"')
 				arr[i][j++] = *str++;
-			if (*str && *str == '"')
-				str--;
+			(*str && *str == '"') ? str-- : 0;
 		}
-		if (j)
-	    	arr[i][j] = '\0';
-		if (*str)
-        {
-            str++;
-            i = j ? i + 1 : i;
-        }
-
+		(j) ? arr[i][j] = '\0' : 0;
+		if (!*str)
+			return (arr);
+		str++;
+		i = j ? i + 1 : i;
 	}
 	return (arr);
 }
@@ -128,7 +123,7 @@ char		**strsplit_ws(char *str)
 	int		wd;
 	char	**res;
 	char	*copy;
-	int temp;
+	int		temp;
 
 	if (!str)
 		return (NULL);
@@ -137,12 +132,13 @@ char		**strsplit_ws(char *str)
 		return (NULL);
 	res = (char **)malloc(sizeof(char *) * wd + 1);
 	i = 0;
-	copy = (char *)str;
-	while (i < wd) {
-        temp = count_simb(&copy);
-        if (temp)
-            res[i++] = (char *) malloc(temp + 1);
-    }
+	copy = str;
+	while (i < wd)
+	{
+		temp = count_simb(&copy);
+		if (temp)
+			res[i++] = (char *)malloc(temp + 1);
+	}
 	res[i] = NULL;
 	return (copy_to_arr(str, res));
 }
