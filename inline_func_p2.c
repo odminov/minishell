@@ -50,7 +50,7 @@ int			ft_cd(char **args)
 	char	temp[PATH_MAX];
 	char	*dir;
 
-	if (args[1] == NULL)
+	if (args[1] == NULL || args[1][0] == '\0')
 		return (cd_home());
 	if ((ft_strcmp(args[1], "-") == 0))
 	{
