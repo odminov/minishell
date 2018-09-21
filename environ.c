@@ -93,8 +93,8 @@ int			ft_setenv(char **args)
 
 	if (!args[1])
 		return (print_env());
-	if ((!ft_strchr(args[1], '=')))
-		return (print_error("misishell: bad assigment\n", NULL));
+	if (!(var = ft_strchr(args[1], '=')) || var[1] == '=')
+		return (print_error("misishell: bad assigment", NULL));
 	var = ft_strdup(args[1]);
 	equ_sign = ft_strchr(var, '=');
 	*equ_sign = '\0';
