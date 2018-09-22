@@ -67,9 +67,9 @@ void	check_args(char **args)
 	i = 1;
 	while (args[i])
 	{
-		temp = args[i];
 		if (args[i][0] == '~' && args[i][1] != '~')
 		{
+			temp = args[i];
 			args[i] = ft_strjoin(get_env_var("HOME"), &(args[i][1]));
 			free(temp);
 		}
