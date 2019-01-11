@@ -23,6 +23,7 @@ char	*g_list_inline_func[] = {
 	"unsetenv",
 	"echo"
 };
+
 int	(*g_inline_func[]) (char **) = {
 	ft_cd,
 	ft_help,

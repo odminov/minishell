@@ -16,7 +16,7 @@
 #include <unistd.h>
 #include <limits.h>
 
-char		**g_env_cp;
+#define ENV_CP glob_data()->g_env_cp
 
 char		**get_copy_env(void)
 {
@@ -27,13 +27,13 @@ char		**get_copy_env(void)
 	i = 0;
 	while (environ[i])
 		i++;
-	if (!(g_env_cp = (char **)malloc(sizeof(char *) * (i + 1))))
+	if (!(ENV_CP = (char **)malloc(sizeof(char *) * (i + 1))))
 		return (NULL);
-	g_env_cp[i] = NULL;
+	ENV_CP[i] = NULL;
 	i = 0;
 	while (environ[i])
 	{
-		if (!(g_env_cp[i] = ft_strdup(environ[i])))
+		if (!(ENV_CP[i] = ft_strdup(environ[i])))
 			return (NULL);
 		i++;
 	}
@@ -41,7 +41,7 @@ char		**get_copy_env(void)
 	temp = ft_itoa(i);
 	change_env_var("SHLVL=", temp);
 	free(temp);
-	return (g_env_cp);
+	return (ENV_CP);
 }
 
 static int	add_new_var(char *var)
@@ -54,20 +54,20 @@ static int	add_new_var(char *var)
 		i++;
 	var[i] = '=';
 	i = 0;
-	while (g_env_cp[i])
+	while (ENV_CP[i])
 		i++;
 	if (!(temp = (char **)malloc(sizeof(char *) * (i + 2))))
 		return (0);
 	temp[i + 1] = NULL;
 	i = 0;
-	while (g_env_cp[i])
+	while (ENV_CP[i])
 	{
-		temp[i] = g_env_cp[i];
+		temp[i] = ENV_CP[i];
 		i++;
 	}
 	temp[i] = var;
-	free(g_env_cp);
-	g_env_cp = temp;
+	free(ENV_CP);
+	ENV_CP = temp;
 	return (1);
 }
 
@@ -76,10 +76,10 @@ char		*get_env_var(const char *var)
 	int		i;
 
 	i = 0;
-	while (g_env_cp[i])
+	while (ENV_CP[i])
 	{
-		if (find_var(g_env_cp[i], var))
-			return (&(g_env_cp[i][ft_strlen(var) + 1]));
+		if (find_var(ENV_CP[i], var))
+			return (&(ENV_CP[i][ft_strlen(var) + 1]));
 		i++;
 	}
 	return (NULL);
@@ -99,12 +99,12 @@ int			ft_setenv(char **args)
 	equ_sign = ft_strchr(var, '=');
 	*equ_sign = '\0';
 	i = 0;
-	while (g_env_cp[i])
+	while (ENV_CP[i])
 	{
-		if (find_var(g_env_cp[i], var))
+		if (find_var(ENV_CP[i], var))
 		{
-			free(g_env_cp[i]);
-			g_env_cp[i] = var;
+			free(ENV_CP[i]);
+			ENV_CP[i] = var;
 			*equ_sign = '=';
 			return (1);
 		}

@@ -13,7 +13,7 @@
 #include "header.h"
 #include <stdlib.h>
 
-extern char	**g_env_cp;
+#define ENV_CP glob_data()->g_env_cp
 
 static char	**copy_current(void)
 {
@@ -21,15 +21,15 @@ static char	**copy_current(void)
 	char	**temp;
 
 	i = 0;
-	while (g_env_cp[i])
+	while (ENV_CP[i])
 		i++;
 	if (!(temp = (char **)malloc(sizeof(char *) * (i + 1))))
 		return (NULL);
 	temp[i] = NULL;
 	i = 0;
-	while (g_env_cp[i])
+	while (ENV_CP[i])
 	{
-		temp[i] = ft_strdup(g_env_cp[i]);
+		temp[i] = ft_strdup(ENV_CP[i]);
 		i++;
 	}
 	return (temp);
@@ -40,13 +40,13 @@ static int	return_old_env(char **temp)
 	int		i;
 
 	i = 0;
-	while (g_env_cp[i])
+	while (ENV_CP[i])
 	{
-		free(g_env_cp[i]);
+		free(ENV_CP[i]);
 		i++;
 	}
-	free(g_env_cp);
-	g_env_cp = temp;
+	free(ENV_CP);
+	ENV_CP = temp;
 	return (1);
 }
 

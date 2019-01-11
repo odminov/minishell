@@ -14,7 +14,7 @@ CC = gcc
 
 FLAGS = -Wextra -Wall -Werror
 
-SRC = main.c inline_func.c environ.c environ_p2.c inline_func_p2.c find_command.c strsplit_ws.c ft_env.c
+SRC = main.c inline_func.c environ.c environ_p2.c inline_func_p2.c find_command.c parse_input.c ft_env.c
 
 D_OBJ = obj/
 
@@ -33,7 +33,7 @@ $(D_OBJ)%.o:%.c header.h
 	$(CC) $(FLAGS) -c $< -o $@
 	
 $(NAME): $(D_OBJ) $(OBJ) $(LIB)
-	$(CC) $(FLAGS) -o $(NAME) $(OBJ) $(LIB)
+	$(CC) $(FLAGS) -o $(NAME) -ltermcap $(OBJ) $(LIB)
 	@printf "\x1b[32m%s compiled\n\x1b[0m\n" $(NAME)
 
 $(D_OBJ):
