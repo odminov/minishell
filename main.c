@@ -158,7 +158,7 @@ void	move_up(t_inpt **list)
 	i = 0;
 	if (((glob_data()->c_pos) - glob_data()->cols) < 3)
 		return ;
-	while (temp && i < co)
+	while (temp && i < glob_data()->cols)
 	{
 		temp = temp->prev;
 		glob_data()->c_pos--;
@@ -177,7 +177,7 @@ void	move_down(t_inpt **list)
 	i = 0;
 	if (((glob_data()->c_pos) + glob_data()->cols) > glob_data()->max_id)
 		return ;
-	while (i < co)
+	while (i < glob_data()->cols)
 	{
 		move_right(&temp);
 		i++;
