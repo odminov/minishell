@@ -12,7 +12,7 @@
 
 CC = gcc
 
-FLAGS = -Wextra -Wall -Werror
+FLAGS = -Wextra -Wall -Werror -fsanitize=address -g
 
 SRC = main.c inline_func.c environ.c environ_p2.c inline_func_p2.c find_command.c parse_input.c ft_env.c
 
@@ -20,7 +20,7 @@ D_OBJ = obj/
 
 OBJ = $(addprefix $(D_OBJ), $(SRC:.c=.o))
 
-NAME = minishell
+NAME = 21sh
 
 LIB = ./libft/libft.a
 

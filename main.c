@@ -19,6 +19,8 @@
 #include <limits.h>
 #include <sys/ioctl.h>
 
+#define PROMPT_SIZE 3
+
 extern char *g_list_inline_func[];
 extern int (*g_inline_func[]) (char **);
 
@@ -30,7 +32,7 @@ char	*cursor_up_;
 extern char	PC;   /* For tputs.  */
 extern char	*BC;  /* For tgoto.  */
 extern char	*UP;
-// char *CD;
+extern short ospeed;
 
 t_glob	*glob_data(void)
 {
@@ -53,18 +55,6 @@ void	my_exit(char *err)
 	if ((tcsetattr(0, TCSANOW, &(glob_data()->settings))) < 0)
 		print_err("Error restore terminal settings\n");
 	exit(1);
-}
-
-static void	resize(int signal)
-{
-	struct winsize	window;
-
-	if (signal == SIGWINCH)
-	{
-		if (ioctl(STDIN, TIOCGWINSZ, &window) < 0)
-			my_exit("Cannot detect window size\n");
-		glob_data()->cols = window.ws_col;
-	}
 }
 
 int		execute(char **args)
@@ -125,7 +115,7 @@ void	move_right(t_inpt **list)
 	}
 	else
 		return ;
-	if (glob_data()->c_pos % glob_data()->cols == 0)
+	if ((glob_data()->c_pos - 1) % glob_data()->cols == 0)
 		tputs(cursor_dw, 1, stdin_putchar);
 	else
 		tputs(cursor_ri, 1, stdin_putchar);
@@ -140,7 +130,7 @@ void	move_left(t_inpt **list)
 	}
 	else
 		return ;
-	if (glob_data()->c_pos % (glob_data()->cols - 1) == 0)
+	if (glob_data()->c_pos % (glob_data()->cols) == 0)
 	{
 		tputs(cursor_up_, 1, stdin_putchar);
 		tputs(tgoto(tgetstr("ch", 0), 0, glob_data()->cols), 1, stdin_putchar);
@@ -151,38 +141,33 @@ void	move_left(t_inpt **list)
 
 void	move_up(t_inpt **list)
 {
-	t_inpt	*temp;
 	int		i;
 
-	temp = *list;
 	i = 0;
-	if (((glob_data()->c_pos) - glob_data()->cols) < 3)
+	if (((glob_data()->c_pos) - glob_data()->cols) < PROMPT_SIZE + 1)
 		return ;
-	while (temp && i < glob_data()->cols)
+	while (*list && i < glob_data()->cols)
 	{
-		temp = temp->prev;
-		glob_data()->c_pos--;
+		move_left(list);
 		i++;
 	}
-	tputs(cursor_up_, 1, stdin_putchar);
-	*list = temp;
+	// tputs(cursor_up_, 1, stdin_putchar);
+	// tputs(tgoto(tgetstr("ch", 0), 0, glob_data()->c_pos % glob_data()->cols), 1, stdin_putchar);
+	// *list = temp;
 }
 
 void	move_down(t_inpt **list)
 {
-	t_inpt	*temp;
 	int		i;
 
-	temp = *list;
 	i = 0;
 	if (((glob_data()->c_pos) + glob_data()->cols) > glob_data()->max_id)
 		return ;
 	while (i < glob_data()->cols)
 	{
-		move_right(&temp);
+		move_right(list);
 		i++;
 	}
-	*list = temp;
 }
 
 static void	read_key(unsigned long key, t_inpt **list)
@@ -219,12 +204,19 @@ void	add_item(t_inpt **list, char c)
 	t_inpt	*new_item;
 	int		save_curs;
 
-	if (!(new_item = init_elem()))
-		return ;
+	new_item = init_elem();
 	new_item->c = c;
 	ft_putchar(c);
+	if ((glob_data()->c_pos) % (glob_data()->cols) == 0)
+	{
+		tputs(tgoto(tgetstr("DO", 0), 0, 1), 1, stdin_putchar);
+		//tputs(tgoto(tgetstr("LE", 0), 0, glob_data()->cols - 1), 1, stdin_putchar);
+		//tputs(tgetstr("nw", 0), 1, stdin_putchar);
+		ft_putstr_fd("tot samui sluchai\n", STDERR);
+	}
 	glob_data()->c_pos++;
 	save_curs = glob_data()->c_pos;
+	// tputs(tgetstr("cd", 0), 1, stdin_putchar);
 	if ((*list)->prev)
 		(*list)->prev->next = new_item;
 	new_item->next = (*list);
@@ -237,8 +229,7 @@ void	add_item(t_inpt **list, char c)
 		glob_data()->c_pos++;
 		new_item = new_item->next;
 	}
-	if (glob_data()->c_pos > glob_data()->max_id)
-		glob_data()->max_id = glob_data()->c_pos;
+	glob_data()->max_id++;
 	tputs(tgoto(tgetstr("LE", 0), 0, glob_data()->c_pos - save_curs), 1, stdin_putchar);
 	glob_data()->c_pos = save_curs;
 }
@@ -253,9 +244,9 @@ void	parse_char(t_inpt **list, char c)
 	{
 		(*list)->c = c;
 		ft_putchar(c);
-		glob_data()->c_pos++;
-		if (glob_data()->c_pos % glob_data()->cols == 0)
+		if (glob_data()->c_pos % (glob_data()->cols) == 0)
 			tputs(cursor_dw, 1, stdin_putchar);
+		glob_data()->c_pos++;
 		(*list)->next = init_elem();
 		(*list)->next->prev = (*list);
 		(*list) = (*list)->next;
@@ -290,12 +281,31 @@ t_inpt	*wait_input(void)
 		else
 			read_key(buf, &list);
 		ft_putnbr_fd(glob_data()->c_pos, STDERR);
+		ft_putstr_fd(" | max_id ", STDERR);
+		ft_putnbr_fd(glob_data()->max_id, STDERR);
+		ft_putstr_fd(" | cols ", STDERR);
+		ft_putnbr_fd(glob_data()->cols, STDERR);
 		write(STDERR, "\n", 1);
 		buf = 0;
 	}
 	if (i < 0)
 		perror("");
 	return (head);
+}
+
+static void	resize(int signal)
+{
+	struct winsize	window;
+
+	if (signal == SIGWINCH)
+	{
+		if (ioctl(STDIN, TIOCGWINSZ, &window) < 0)
+			my_exit("Cannot detect window size\n");
+		glob_data()->cols = window.ws_col;
+	}
+	ft_putstr_fd("resize interrupt\n", STDERR);
+	ft_putnbr_fd(glob_data()->max_id / glob_data()->cols, STDERR);
+	ft_putstr_fd("\n", STDERR);
 }
 
 int		main_loop(void)
@@ -311,7 +321,7 @@ int		main_loop(void)
 		ft_putstr("$> ");
 		input = wait_input();
 		// tputs(tgetstr("cd", 0), 1, stdin_putchar);
-		printf("\nall simbs: %d\n", glob_data()->c_pos - 3);
+		printf("\nall simbs: %d\n", glob_data()->c_pos - PROMPT_SIZE + 1);
 		my_exit(0);
 		args = parse_input(input);
 		status = run_command(args);
@@ -348,7 +358,7 @@ void	init_glob(void)
 	cursor_ri = tgetstr("nd", 0);
 	cursor_dw = tgetstr("do", 0);
 	cursor_up_ = tgetstr("up", 0);
-	glob_data()->c_pos = 3;
+	glob_data()->c_pos = PROMPT_SIZE + 1;
 	glob_data()->max_id = 0;
 	glob_data()->cols = window.ws_col;
 }
