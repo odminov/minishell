@@ -18,6 +18,7 @@
 #include <signal.h>
 #include <limits.h>
 #include <sys/ioctl.h>
+#include <stdio.h>
 
 #define PROMPT_SIZE 3
 
@@ -209,8 +210,10 @@ void	add_item(t_inpt **list, char c)
 	ft_putchar(c);
 	if ((glob_data()->c_pos) % (glob_data()->cols) == 0)
 	{
+		//tputs(tgoto(tgetstr("LE", 0), 0, glob_data()->cols), 1, stdin_putchar);
 		tputs(tgoto(tgetstr("DO", 0), 0, 1), 1, stdin_putchar);
-		//tputs(tgoto(tgetstr("LE", 0), 0, glob_data()->cols - 1), 1, stdin_putchar);
+		ft_putchar('\r');
+		// tputs(tgoto(tgetstr("cm", 0), 0, 0), 1, stdin_putchar);
 		//tputs(tgetstr("nw", 0), 1, stdin_putchar);
 		ft_putstr_fd("tot samui sluchai\n", STDERR);
 	}
@@ -346,6 +349,7 @@ void	term_settings(void)
 	new_settings.c_lflag |= TOSTOP;
 	if ((tcsetattr(0, TCSAFLUSH, &new_settings)) < 0)
 		print_err("Error set new terminal settings\n");
+	//tputs(tgetstr("RA", 0), 1, stdin_putchar);
 }
 
 void	init_glob(void)
