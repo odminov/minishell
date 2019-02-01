@@ -212,9 +212,9 @@ void	add_item(t_inpt **list, char c)
 	{
 		//tputs(tgoto(tgetstr("LE", 0), 0, glob_data()->cols), 1, stdin_putchar);
 		tputs(tgoto(tgetstr("DO", 0), 0, 1), 1, stdin_putchar);
-		ft_putchar('\r');
+		ft_putchar_fd('\r', STDERR);
 		// tputs(tgoto(tgetstr("cm", 0), 0, 0), 1, stdin_putchar);
-		//tputs(tgetstr("nw", 0), 1, stdin_putchar);
+		// tputs(tgetstr("cr", 0), 1, stdin_putchar);
 		ft_putstr_fd("tot samui sluchai\n", STDERR);
 	}
 	glob_data()->c_pos++;
