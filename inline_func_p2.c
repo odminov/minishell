@@ -14,6 +14,7 @@
 #include <unistd.h>
 #include <stdlib.h>
 #include <limits.h>
+#include <signal.h>
 
 static void	change_old_pwd(void)
 {

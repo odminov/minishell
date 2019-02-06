@@ -12,7 +12,8 @@
 
 CC = gcc
 
-FLAGS = -Wextra -Wall -Werror -fsanitize=address -g
+FLAGS = -Wextra -Wall -Werror
+# -fsanitize=address -g
 
 SRC = main.c inline_func.c environ.c environ_p2.c inline_func_p2.c find_command.c parse_input.c ft_env.c
 
@@ -33,7 +34,7 @@ $(D_OBJ)%.o:%.c header.h
 	$(CC) $(FLAGS) -c $< -o $@
 	
 $(NAME): $(D_OBJ) $(OBJ) $(LIB)
-	$(CC) $(FLAGS) -o $(NAME) -ltermcap $(OBJ) $(LIB)
+	$(CC) $(FLAGS) -o $(NAME) $(OBJ) $(LIB) -ltermcap
 	@printf "\x1b[32m%s compiled\n\x1b[0m\n" $(NAME)
 
 $(D_OBJ):

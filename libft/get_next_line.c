@@ -45,8 +45,7 @@ static int		read_line(t_gnl *list, char **line)
 {
 	int	ret;
 
-	if (!(*line = ft_strnew(0)))
-		return (-1);
+	*line = ft_strnew(0);
 	while (1)
 	{
 		if (*list->buff)
@@ -63,7 +62,8 @@ static int		read_line(t_gnl *list, char **line)
 			else
 			{
 				free(*line);
-				return ((int)(*line = NULL));
+				line = NULL;
+				return (0);
 			}
 		}
 		list->buff[ret] = '\0';
