@@ -20,6 +20,7 @@
 #include <sys/ioctl.h>
 #include <stdio.h>
 
+
 #define PROMPT_SIZE 3
 
 extern char *g_list_inline_func[];
@@ -131,12 +132,13 @@ void	move_left(t_inpt **list)
 	}
 	else
 		return ;
-	if (glob_data()->c_pos % (glob_data()->cols) == 0)
-	{
-		tputs(cursor_up_, 1, stdin_putchar);
-		tputs(tgoto(tgetstr("ch", 0), 0, glob_data()->cols), 1, stdin_putchar);
-	}
-	else
+	// if (glob_data()->c_pos % (glob_data()->cols) == 0)
+	// {
+	// 	tputs(cursor_up_, 1, stdin_putchar);
+	// 	tputs(tgoto(tgetstr("ch", 0), 0, glob_data()->cols), 1, stdin_putchar);
+	// 	ft_putstr_fd("cursor_up_ \n", STDERR);
+	// }
+	// else
 		tputs(cursor_le, 1, stdin_putchar);
 }
 
@@ -203,38 +205,37 @@ t_inpt	*init_elem(void)
 void	add_item(t_inpt **list, char c)
 {
 	t_inpt	*new_item;
-	int		save_curs;
+	//int		save_curs;
 
 	new_item = init_elem();
 	new_item->c = c;
+	//tputs(tgetstr("im", 0), 1, stdin_putchar);
+	//tputs(tgetstr("ic", 0), 1, stdin_putchar);
+	tputs(tgoto(tgetstr("IC", 0), 0, 1), 1, stdin_putchar);
 	ft_putchar(c);
-	if ((glob_data()->c_pos) % (glob_data()->cols) == 0)
-	{
-		//tputs(tgoto(tgetstr("LE", 0), 0, glob_data()->cols), 1, stdin_putchar);
-		tputs(tgoto(tgetstr("DO", 0), 0, 1), 1, stdin_putchar);
-		ft_putchar_fd('\r', STDERR);
-		// tputs(tgoto(tgetstr("cm", 0), 0, 0), 1, stdin_putchar);
-		// tputs(tgetstr("cr", 0), 1, stdin_putchar);
-		ft_putstr_fd("tot samui sluchai\n", STDERR);
-	}
+	//tputs(tgetstr("ip", 0), 1, stdin_putchar);
+	// if ((glob_data()->c_pos) % (glob_data()->cols) == 0)
+	// 	tputs(cursor_dw, 1, stdin_putchar);
+	//tputs(tgetstr("cd", 0), 1, stdin_putchar);
 	glob_data()->c_pos++;
-	save_curs = glob_data()->c_pos;
-	// tputs(tgetstr("cd", 0), 1, stdin_putchar);
+	// save_curs = glob_data()->c_pos;
 	if ((*list)->prev)
 		(*list)->prev->next = new_item;
 	new_item->next = (*list);
 	new_item->prev = (*list)->prev;
 	(*list)->prev = new_item;
-	new_item = (*list);
-	while (new_item->next)
-	{
-		ft_putchar(new_item->c);
-		glob_data()->c_pos++;
-		new_item = new_item->next;
-	}
-	glob_data()->max_id++;
-	tputs(tgoto(tgetstr("LE", 0), 0, glob_data()->c_pos - save_curs), 1, stdin_putchar);
-	glob_data()->c_pos = save_curs;
+	//tputs(tgetstr("ei", 0), 1, stdin_putchar);
+	// while ((*list)->next)
+	// {
+	// 	ft_putchar((*list)->c);
+	// 	if ((glob_data()->c_pos) % (glob_data()->cols) == 0)
+	// 		tputs(cursor_dw, 1, stdin_putchar);
+	// 	glob_data()->c_pos++;
+	// 	(*list) = (*list)->next;
+	// }
+	// glob_data()->max_id++;
+	// while (glob_data()->c_pos > save_curs)
+	// 	move_left(list);
 }
 
 void	parse_char(t_inpt **list, char c)
@@ -247,8 +248,8 @@ void	parse_char(t_inpt **list, char c)
 	{
 		(*list)->c = c;
 		ft_putchar(c);
-		if (glob_data()->c_pos % (glob_data()->cols) == 0)
-			tputs(cursor_dw, 1, stdin_putchar);
+		// if (glob_data()->c_pos % (glob_data()->cols) == 0)
+		// 	tputs(cursor_dw, 1, stdin_putchar);
 		glob_data()->c_pos++;
 		(*list)->next = init_elem();
 		(*list)->next->prev = (*list);
@@ -324,7 +325,7 @@ int		main_loop(void)
 		ft_putstr("$> ");
 		input = wait_input();
 		// tputs(tgetstr("cd", 0), 1, stdin_putchar);
-		printf("\nall simbs: %d\n", glob_data()->c_pos - PROMPT_SIZE + 1);
+		printf("\nall simbs: %d\n", glob_data()->c_pos - PROMPT_SIZE - 1);
 		my_exit(0);
 		args = parse_input(input);
 		status = run_command(args);
@@ -349,7 +350,7 @@ void	term_settings(void)
 	new_settings.c_lflag |= TOSTOP;
 	if ((tcsetattr(0, TCSAFLUSH, &new_settings)) < 0)
 		print_err("Error set new terminal settings\n");
-	//tputs(tgetstr("RA", 0), 1, stdin_putchar);
+	tgetflag("am");
 }
 
 void	init_glob(void)

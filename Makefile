@@ -12,8 +12,7 @@
 
 CC = gcc
 
-FLAGS = -Wextra -Wall -Werror
-# -fsanitize=address -g
+FLAGS = -Wextra -Wall -Werror -fsanitize=address -g
 
 SRC = main.c inline_func.c environ.c environ_p2.c inline_func_p2.c find_command.c parse_input.c ft_env.c
 
